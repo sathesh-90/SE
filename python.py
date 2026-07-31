@@ -1,66 +1,49 @@
-"""
-Algorithm:
-1. Start from index 0.
-2. For every candidate:
-      a) Take it.
-      b) Skip it.
-3. If target becomes 0 -> save answer.
-4. If target < 0 or index reaches end -> stop recursion.
+from typing import List
 
-Time Complexity:
-Worst Case: O(2^(target/minCandidate))
+class Solution:
 
-Space Complexity:
-O(target/minCandidate)
-"""
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
 
+        ans = []
+        path = []
+        n = len(candidates)
 
-def combinationSum(candidates, target):
+        def dfs(index, remaining):
 
-    answer = []
+            if remaining == 0:
+                ans.append(path.copy())
+                return
 
-    # Backtracking function
-    def backtrack(index, target, current):
+            if remaining < 0 or index == n:
+                return
 
-        # Valid combination found
-        if target == 0:
-            answer.append(current[:])
-            return
+            path.append(candidates[index])
+            dfs(index, remaining - candidates[index])
+            path.pop()
 
-        # Invalid case
-        if index == len(candidates) or target < 0:
-            return
+            dfs(index + 1, remaining)
 
-        # -------------------
-        # Take current element
-        # -------------------
-        current.append(candidates[index])
+        dfs(0, target)
 
-        # Stay on same index because reuse is allowed
-        backtrack(index, target - candidates[index], current)
-
-        # Remove last element
-        current.pop()
-
-        # -------------------
-        # Skip current element
-        # -------------------
-        backtrack(index + 1, target, current)
-
-    backtrack(0, target, [])
-
-    return answer
+        return ans
 
 
 def main():
 
+    # Number of candidates
     n = int(input())
 
+    # Candidates array
     candidates = list(map(int, input().split()))
 
+    # Target value
     target = int(input())
 
-    print(combinationSum(candidates, target))
+    obj = Solution()
+
+    result = obj.combinationSum(candidates, target)
+
+    print(result)
 
 
 if __name__ == "__main__":
