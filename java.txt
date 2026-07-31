@@ -1,83 +1,75 @@
 import java.util.*;
 
-/*
-Algorithm:
-1. Start from index 0.
-2. At every index we have two choices:
-   a) Take the current element (stay at same index because it can be reused).
-   b) Skip the current element (move to next index).
-3. If target becomes 0, store the current combination.
-4. If target becomes negative or index reaches end, stop recursion.
+class Solution {
 
-Time Complexity:
-Worst Case: O(2^(target/minCandidate))
-(Depends on number of valid combinations.)
+    // Function to find all combinations
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
 
-Space Complexity:
-O(target/minCandidate)
-Recursion stack + current combination.
-*/
+        List<List<Integer>> ans = new ArrayList<>();
+        List<Integer> path = new ArrayList<>();
+        int n = candidates.length;
 
-public class Main {
+        dfs(0, target, candidates, n, path, ans);
 
-    // Function to generate all combinations
-    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
-
-        List<List<Integer>> answer = new ArrayList<>();
-
-        backtrack(candidates, target, 0, new ArrayList<>(), answer);
-
-        return answer;
+        return ans;
     }
 
     // Backtracking function
-    public static void backtrack(int[] candidates,
-                                 int target,
-                                 int index,
-                                 List<Integer> current,
-                                 List<List<Integer>> answer) {
+    private void dfs(int index, int remaining, int[] candidates, int n,
+                     List<Integer> path, List<List<Integer>> ans) {
 
-        // Target achieved
-        if (target == 0) {
-            answer.add(new ArrayList<>(current));
+        // If target becomes 0, store the current combination
+        if (remaining == 0) {
+            ans.add(new ArrayList<>(path));
             return;
         }
 
-        // Invalid case
-        if (index == candidates.length || target < 0)
+        // Stop if target becomes negative or all candidates are processed
+        if (remaining < 0 || index == n) {
             return;
+        }
 
-        // -------------------
-        // Choice 1 : Take current element
-        // -------------------
-        current.add(candidates[index]);
+        // -------------------------
+        // Choice 1: Pick current candidate
+        // -------------------------
+        path.add(candidates[index]);
 
-        // Stay at same index because element can be reused
-        backtrack(candidates, target - candidates[index], index, current, answer);
+        // Stay at the same index because
+        // the same number can be used multiple times
+        dfs(index, remaining - candidates[index], candidates, n, path, ans);
 
         // Backtrack
-        current.remove(current.size() - 1);
+        path.remove(path.size() - 1);
 
-        // -------------------
-        // Choice 2 : Skip current element
-        // -------------------
-        backtrack(candidates, target, index + 1, current, answer);
+        // -------------------------
+        // Choice 2: Skip current candidate
+        // -------------------------
+        dfs(index + 1, remaining, candidates, n, path, ans);
     }
+}
+
+public class Main {
 
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
 
+        // Number of candidates
         int n = sc.nextInt();
 
+        // Candidates array
         int[] candidates = new int[n];
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             candidates[i] = sc.nextInt();
+        }
 
+        // Target value
         int target = sc.nextInt();
 
-        List<List<Integer>> result = combinationSum(candidates, target);
+        Solution obj = new Solution();
+
+        List<List<Integer>> result = obj.combinationSum(candidates, target);
 
         System.out.println(result);
 
