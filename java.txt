@@ -1,0 +1,86 @@
+import java.util.*;
+
+/*
+Algorithm:
+1. Start from index 0.
+2. At every index we have two choices:
+   a) Take the current element (stay at same index because it can be reused).
+   b) Skip the current element (move to next index).
+3. If target becomes 0, store the current combination.
+4. If target becomes negative or index reaches end, stop recursion.
+
+Time Complexity:
+Worst Case: O(2^(target/minCandidate))
+(Depends on number of valid combinations.)
+
+Space Complexity:
+O(target/minCandidate)
+Recursion stack + current combination.
+*/
+
+public class Main {
+
+    // Function to generate all combinations
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+
+        List<List<Integer>> answer = new ArrayList<>();
+
+        backtrack(candidates, target, 0, new ArrayList<>(), answer);
+
+        return answer;
+    }
+
+    // Backtracking function
+    public static void backtrack(int[] candidates,
+                                 int target,
+                                 int index,
+                                 List<Integer> current,
+                                 List<List<Integer>> answer) {
+
+        // Target achieved
+        if (target == 0) {
+            answer.add(new ArrayList<>(current));
+            return;
+        }
+
+        // Invalid case
+        if (index == candidates.length || target < 0)
+            return;
+
+        // -------------------
+        // Choice 1 : Take current element
+        // -------------------
+        current.add(candidates[index]);
+
+        // Stay at same index because element can be reused
+        backtrack(candidates, target - candidates[index], index, current, answer);
+
+        // Backtrack
+        current.remove(current.size() - 1);
+
+        // -------------------
+        // Choice 2 : Skip current element
+        // -------------------
+        backtrack(candidates, target, index + 1, current, answer);
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        int[] candidates = new int[n];
+
+        for (int i = 0; i < n; i++)
+            candidates[i] = sc.nextInt();
+
+        int target = sc.nextInt();
+
+        List<List<Integer>> result = combinationSum(candidates, target);
+
+        System.out.println(result);
+
+        sc.close();
+    }
+}
